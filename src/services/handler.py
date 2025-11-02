@@ -33,7 +33,7 @@ def cmdline_to_kwargs(cmd_line: str) -> dict[str, str | list[str]]:
     except IndexError:
         return kwargs
 
-    kwargs['options'] = [option for option in kwargs if option[0] == '-']
+    kwargs['options'] = [option for option in args if option[0] == '-']
 
     kwargs['args'] = args
     return kwargs
