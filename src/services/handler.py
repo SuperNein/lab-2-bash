@@ -8,7 +8,14 @@ logger = logging.getLogger(__name__)
 logging_config(level=logging.DEBUG)
 
 
-def cmdline_to_kwargs(cmd_line: str) -> dict:
+def cmdline_to_kwargs(cmd_line: str) -> dict[str, str | list[str]]:
+    '''
+    Convert stdin from cmd line to dictionary with keys:
+    cmd, options, args
+
+    :param cmd_line:    stdin from cmd
+    :return:    dictionary type: {cmd: str, options: list[str], args: list[str]}
+    '''
     try:
         args = shlex_split(cmd_line)
     except ValueError as e:
