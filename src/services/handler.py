@@ -1,0 +1,47 @@
+import logging
+from shlex import split as shlex_split
+
+from src.common.config import logging_config
+from src.services.console import Console
+
+logger = logging.getLogger(__name__)
+logging_config(level=logging.DEBUG)
+
+
+def cmdline_to_kwargs(cmd_line: str) -> dict:
+    try:
+        args = shlex_split(cmd_line)
+    except ValueError as e:
+        logger.error(f'Invalid arguments: {e}')
+        raise SyntaxError(e)
+
+    kwargs = {
+        'cmd': '',
+        'options': [],
+        'args': []
+    }
+
+    try:
+        kwargs['cmd'] = args.pop(0)
+    except IndexError:
+        return kwargs
+
+    kwargs['options'] = [option for option in kwargs if option[0] == '-']
+
+    kwargs['args'] = args
+    return kwargs
+
+
+def console_handling(console: Console, cmd_line: str):
+    kwargs = cmdline_to_kwargs(cmd_line)
+
+    match kwargs['cmd']:
+        case 'exit' | 'quit' | 'q':
+            console.exit(**kwargs)
+        case 'ls':
+            console.ls(**kwargs)
+        case '':
+            pass
+        case _:
+            logger.error(f'Unknown command: {kwargs['cmd']}')
+            raise RuntimeError(f'{kwargs['cmd']}: command not found')

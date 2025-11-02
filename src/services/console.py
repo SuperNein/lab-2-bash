@@ -7,6 +7,9 @@ class Console:
     def __init__(self, logger: logging.Logger):
         self._logger = logger
 
-    def ls(self, path: PathLike[str] | str):
-        path = Path(path)
-        return
+    def exit(self, cmd: str, options: list, args: list) -> None:
+        self._logger.info(f'Interrupted by command: {cmd}')
+        raise KeyboardInterrupt
+
+    def ls(self, cmd: str, options: list, args: list):
+        pass
