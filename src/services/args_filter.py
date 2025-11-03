@@ -1,6 +1,8 @@
 import logging
+from pathlib import Path
 
 from src.common.config import logging_config
+from src.states.current_dir import current_dir
 
 logger = logging.getLogger(__name__)
 logging_config(level=logging.DEBUG)
@@ -21,6 +23,24 @@ def options_filter(available_options: list[str] | None = None):
                 if not (option in available_options):
                     logger.error(f'Invalid option for {kwargs['cmd']}: {option}')
                     raise ValueError(f'{kwargs['cmd']}: {option}: invalid option')
+
+            result = func(*args, **kwargs)
+            return result
+        return wrapper
+    return decorator
+
+
+def args_filter(args_num: list[int] | None = None):
+    """
+    A decorator filtering 'args' list from func kwargs
+    :param args_num:    list of available numbers of args. No limit as default
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+
+            if (args_num is not None) and (len(kwargs['args']) not in args_num):
+                logger.error(f'Invalid number of arguments for {kwargs['cmd']}')
+                raise ValueError(f'{kwargs['cmd']}: invalid number of arguments')
 
             result = func(*args, **kwargs)
             return result
