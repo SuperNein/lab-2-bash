@@ -22,6 +22,7 @@ def main() -> None:
 
         try:
             stdout = console_handling(console, stdin)
+            print(*stdout, sep='\n')
         except KeyboardInterrupt:
             exit()
         except Exception as e:

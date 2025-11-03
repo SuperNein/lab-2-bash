@@ -41,14 +41,19 @@ def cmdline_to_kwargs(cmd_line: str) -> dict[str, str | list[str]]:
 
 def console_handling(console: Console, cmd_line: str):
     kwargs = cmdline_to_kwargs(cmd_line)
+    stdout: list = []
+
+    logger.debug(kwargs)
 
     match kwargs['cmd']:
         case 'exit' | 'quit' | 'q':
             console.exit(**kwargs)
         case 'ls':
-            console.ls(**kwargs)
+            stdout = console.ls(**kwargs)
         case '':
             pass
         case _:
             logger.error(f'Unknown command: {kwargs['cmd']}')
             raise RuntimeError(f'{kwargs['cmd']}: command not found')
+
+    return stdout
