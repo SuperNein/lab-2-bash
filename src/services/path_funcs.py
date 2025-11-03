@@ -5,6 +5,16 @@ from datetime import datetime
 
 
 def path_stat(path: Path) -> dict[str, str]:
+    """
+    Return stat of directory or file from path
+    :param path:    path to file of directory
+    :return:    dict = {
+        'name': str,
+        'mode': str,
+        'mtime': str,
+        'size': str
+    }
+    """
     stat = path.stat()
     path_info = {
         'name': path.name,
