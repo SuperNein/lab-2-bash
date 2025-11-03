@@ -1,8 +1,6 @@
 import logging
-from pathlib import Path
 
 from src.common.config import logging_config
-from src.states.current_dir import current_dir
 
 logger = logging.getLogger(__name__)
 logging_config(level=logging.DEBUG)

@@ -1,4 +1,3 @@
-from os import PathLike
 from pathlib import Path
 from stat import filemode
 from datetime import datetime
