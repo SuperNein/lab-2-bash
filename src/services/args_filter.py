@@ -6,7 +6,10 @@ logger = logging.getLogger(__name__)
 logging_config(level=logging.DEBUG)
 
 
-def options_filter(available_options: list = []):
+def options_filter(available_options: list[str] | None = None):
+    if not available_options:
+        available_options = ['']
+
     def decorator(func):
         def wrapper(*args, **kwargs):
 
