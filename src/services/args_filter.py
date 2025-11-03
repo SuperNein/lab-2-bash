@@ -7,8 +7,12 @@ logging_config(level=logging.DEBUG)
 
 
 def options_filter(available_options: list[str] | None = None):
+    """
+    A decorator filtering 'options' list from func kwargs
+    :param available_options:    list of available options. Empty list as default
+    """
     if not available_options:
-        available_options = ['']
+        available_options = []
 
     def decorator(func):
         def wrapper(*args, **kwargs):
