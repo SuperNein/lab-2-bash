@@ -1,8 +1,8 @@
 import logging
-from os import PathLike
 from pathlib import Path
 
 from src.services.args_filter import options_filter, args_filter
+from src.services.path_funcs import path_stat
 from src.states.current_dir import current_dir
 
 
@@ -10,11 +10,13 @@ class Console:
     def __init__(self, logger: logging.Logger):
         self._logger = logger
 
+
     @options_filter(available_options=[])
     @args_filter(args_num=[0])
     def exit(self, cmd: str, options: list, args: list) -> None:
         self._logger.info(f'Interrupted by command: {cmd}')
         raise KeyboardInterrupt
+
 
     @options_filter(available_options=['-l'])
     @args_filter(args_num=[0, 1])
@@ -35,4 +37,17 @@ class Console:
             raise NotADirectoryError(f'{cmd}: cannot access {path!r}: Not a directory')
 
         self._logger.info(f'Listing {path!r}')
-        return [entry.name for entry in path.iterdir()]
+
+        dirlist = []
+        for entry in path.iterdir():
+            entry_info = ''
+
+            if '-l' in options:
+                stat = path_stat(entry)
+                entry_info = f'{stat['mode']} {stat['mtime']} {stat['size']:>15} {stat['name']}'
+            else:
+                entry_info = entry.name
+
+            dirlist.append(entry_info)
+
+        return dirlist
