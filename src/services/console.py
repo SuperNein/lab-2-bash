@@ -21,11 +21,7 @@ class Console:
     @options_filter(available_options=['-l'])
     @args_filter(args_num=[0, 1])
     def ls(self, cmd: str, options: list, args: list) -> list[str]:
-        try:
-            path = paths_to_abs(args)[0]
-        except Exception as e:
-            self._logger.error(e, exc_info=True)
-            raise e
+        path = paths_to_abs(args)[0]
         
         if not path.exists():
             self._logger.error(f'Folder not found: {path!r}')
@@ -55,11 +51,7 @@ class Console:
     @options_filter(available_options=[])
     @args_filter(args_num=[0, 1])
     def cd(self, cmd: str, options: list, args: list):
-        try:
-            path = paths_to_abs(args)[0]
-        except Exception as e:
-            self._logger.error(e, exc_info=True)
-            raise e
+        path = paths_to_abs(args)[0]
 
         if not path.exists():
             self._logger.error(f'Folder not found: {path!r}')
