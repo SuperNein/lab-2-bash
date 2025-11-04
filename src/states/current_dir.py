@@ -1,3 +1,4 @@
 from pathlib import Path
 
-current_dir = Path.home()
+home_dir = Path.home()
+current_dir = home_dir
