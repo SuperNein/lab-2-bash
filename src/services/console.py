@@ -50,3 +50,25 @@ class Console:
             dirlist.append(entry_info)
 
         return dirlist
+
+
+    @options_filter(available_options=[])
+    @args_filter(args_num=[0, 1])
+    def cd(self, cmd: str, options: list, args: list):
+        try:
+            path = paths_to_abs(args)[0]
+        except Exception as e:
+            self._logger.error(e, exc_info=True)
+            raise e
+
+        if not path.exists():
+            self._logger.error(f'Folder not found: {path!r}')
+            raise FileNotFoundError(f'{cmd}: cannot access {path!r}: No such file or directory')
+
+        if not path.is_dir():
+            self._logger.error(f'{path!r} is not a directory')
+            raise NotADirectoryError(f'{cmd}: cannot access {path!r}: Not a directory')
+
+        self._logger.info(f'Transition to {path!r}')
+
+        cwd.current_dir = path
