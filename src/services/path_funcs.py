@@ -2,7 +2,7 @@ from pathlib import Path
 from stat import filemode
 from datetime import datetime
 
-from src.states.current_dir import current_dir
+from src.states import current_dir as cwd
 
 
 def path_stat(path: Path) -> dict[str, str]:
@@ -43,10 +43,10 @@ def paths_to_abs(paths_args: list[str]) -> list[Path]:
                 path = path.expanduser()
 
             if not path.is_absolute():
-                path = (current_dir / path).resolve()
+                path = (cwd.current_dir / path).resolve()
             paths.append(path)
 
     else:
-        paths.append(current_dir)
+        paths.append(cwd.current_dir)
 
     return paths

@@ -3,7 +3,7 @@ import logging
 from src.common.config import logging_config
 from src.services.handler import console_handling
 from src.services.console import Console
-from src.states.current_dir import current_dir
+from src.states import current_dir as cwd
 
 
 def main() -> None:
@@ -15,7 +15,7 @@ def main() -> None:
     logging_config(level=logging.DEBUG)
 
     while True:
-        stdin = input(f'{current_dir}> ')
+        stdin = input(f'{cwd.current_dir}> ')
         logger.info(f'User input: {stdin!r}')
 
         console = Console(logger)

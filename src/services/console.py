@@ -3,6 +3,7 @@ from pathlib import Path
 
 from src.services.args_filter import options_filter, args_filter
 from src.services.path_funcs import path_stat, paths_to_abs
+from src.states import current_dir as cwd
 
 
 class Console:

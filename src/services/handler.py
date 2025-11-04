@@ -53,6 +53,8 @@ def console_handling(console: Console, cmd_line: str):
             console.exit(**kwargs)
         case 'ls':
             stdout = console.ls(**kwargs)
+        case 'cd':
+            console.cd(**kwargs)
         case '':
             pass
         case _:
