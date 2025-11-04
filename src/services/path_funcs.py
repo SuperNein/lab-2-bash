@@ -2,6 +2,8 @@ from pathlib import Path
 from stat import filemode
 from datetime import datetime
 
+from src.states.current_dir import current_dir
+
 
 def path_stat(path: Path) -> dict[str, str]:
     """
@@ -23,3 +25,28 @@ def path_stat(path: Path) -> dict[str, str]:
     }
 
     return path_info
+
+
+def paths_to_abs(paths_args: list[str]) -> list[Path]:
+    """
+    Convert string paths to absolute Path objects.
+    If :paths_args: is empty list, return list with current directory
+    :param paths_args:    list of str paths
+    :return:    list of absolute Path objects
+    """
+    paths = []
+    if paths_args:
+
+        for path_str in paths_args:
+            path = Path(path_str)
+            if '~' in path_str:
+                path = path.expanduser()
+
+            if not path.is_absolute():
+                path = (current_dir / path).resolve()
+            paths.append(path)
+
+    else:
+        paths.append(current_dir)
+
+    return paths
