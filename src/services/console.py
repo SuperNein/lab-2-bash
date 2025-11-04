@@ -2,8 +2,7 @@ import logging
 from pathlib import Path
 
 from src.services.args_filter import options_filter, args_filter
-from src.services.path_funcs import path_stat
-from src.states.current_dir import current_dir
+from src.services.path_funcs import path_stat, paths_to_abs
 
 
 class Console:
@@ -21,12 +20,11 @@ class Console:
     @options_filter(available_options=['-l'])
     @args_filter(args_num=[0, 1])
     def ls(self, cmd: str, options: list, args: list) -> list[str]:
-        if args:
-            path = Path(args[0])
-            if not path.is_absolute():
-                path = (current_dir / path).resolve()
-        else:
-            path = current_dir
+        try:
+            path = paths_to_abs(args)[0]
+        except Exception as e:
+            self._logger.error(e, exc_info=True)
+            raise e
         
         if not path.exists():
             self._logger.error(f'Folder not found: {path!r}')
