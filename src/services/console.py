@@ -64,3 +64,21 @@ class Console:
         self._logger.info(f'Transition to {path!r}')
 
         cwd.current_dir = path
+
+
+    @options_filter(available_options=[])
+    @args_filter(args_num=[0, 1])
+    def cat(self, cmd: str, options: list, args: list):
+        path = paths_to_abs(args)[0]
+
+        if not path.exists():
+            self._logger.error(f'File not found: {path!r}')
+            raise FileNotFoundError(f'{cmd}: cannot access {path!r}: No such file or directory')
+
+        if path.is_dir():
+            self._logger.error(f'{path!r} is not a directory')
+            raise IsADirectoryError(f'{cmd}: cannot access {path!r}: Is a directory')
+
+        self._logger.info(f'Read file {path!r}')
+
+        return path.read_text(encoding="utf-8").splitlines()
