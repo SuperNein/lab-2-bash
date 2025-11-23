@@ -11,4 +11,6 @@ class OSConsoleServiceBase(ABC):
     def cat(
         self,
         filename: PathLike | str,
-    ) -> str | bytes: ...
+    ) -> str: ...
+
+

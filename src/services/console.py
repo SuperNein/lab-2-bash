@@ -30,7 +30,7 @@ class OSConsoleService(OSConsoleServiceBase):
     def cat(
         self,
         filename: PathLike[str] | str,
-    ) -> str | bytes:
+    ) -> str:
 
         path = Path(filename)
 
