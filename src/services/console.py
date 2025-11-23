@@ -7,7 +7,7 @@ from typing import Literal
 from src.services.base import OSConsoleServiceBase
 
 
-class ConsoleService(OSConsoleServiceBase):
+class OSConsoleService(OSConsoleServiceBase):
     def __init__(self, logger: Logger):
         self._logger = logger
 

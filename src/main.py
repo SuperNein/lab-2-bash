@@ -10,7 +10,7 @@ import typer
 from typer import Typer, Context
 
 from src.dependencies.container import Container
-from src.services.console import ConsoleService
+from src.services.console import OSConsoleService
 
 _logger = None
 _container = None
@@ -38,7 +38,7 @@ def init_container() -> None:
     if not isinstance(_container, Container):
         logging.config.dictConfig(LOGGING_CONFIG)
         _logger = logging.getLogger(__name__)
-        _container = Container(console_service=ConsoleService(logger=_logger))
+        _container = Container(console_service=OSConsoleService(logger=_logger))
 
 
 @app.callback()
