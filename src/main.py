@@ -75,7 +75,9 @@ def ls(
     path: Path = typer.Argument(
         "./", exists=False, readable=False, help="Path for listing",
     ),
-    l_option: bool = typer.Option(False, "-l", help="Use long listing format"),
+    l_option: bool = typer.Option(
+        False, "-l", help="Use long listing format"
+    ),
 ) -> None:
     """
     List all files in a directory.
@@ -136,6 +138,35 @@ def cat(
             sys.stdout.write(data)
     except OSError as e:
         typer.echo(f"{ctx.command.name}: {e}")
+
+
+@app.command()
+def cp(
+    ctx: Context,
+    path_from: Path = typer.Argument(
+        ..., exists=False, readable=False, help="File "
+    ),
+    path_to: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Directory to make current"
+    ),
+    r_option: bool = typer.Option(
+        False, "-l", help="Copy directories recursively"
+    ),
+) -> None:
+    """
+    Copy file.
+    :param ctx: typer context object for imitating di container
+    :param path_from: path to copy
+    :param path_to: path where
+    :param r_option:  recursive mode
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.cp(path_from, path_to, r_option)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
 
 
 if __name__ == "__main__":

@@ -16,3 +16,11 @@ class OSConsoleServiceBase(ABC):
 
     @abstractmethod
     def cat(self, filename: PathLike | str) -> str: ...
+
+    @abstractmethod
+    def cp(
+            self,
+            path_from: PathLike[str] | str,
+            path_to: PathLike[str] | str,
+            r_option: bool,
+    ) -> list[str]: ...

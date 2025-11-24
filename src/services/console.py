@@ -1,5 +1,6 @@
 import logging
 import os
+import shutil
 from logging import Logger
 from os import PathLike
 from pathlib import Path
@@ -74,3 +75,32 @@ class OSConsoleService(OSConsoleServiceBase):
         self._logger.info(f"Reading file {path}")
 
         return path.read_text(encoding="utf-8")
+
+
+    def cp(
+        self,
+        path_from: PathLike[str] | str,
+        path_to: PathLike[str] | str,
+        r_option: bool,
+    ) -> None:
+
+        path_from = Path(path_from).expanduser().resolve()
+        path_to = Path(path_to).expanduser().resolve()
+
+        if not path_from.exists(follow_symlinks=True):
+            self._logger.error(f"File not found: {path_from}")
+            raise FileNotFoundError(f'Cannot access {path_from}: No such file or directory')
+
+        if path_from.is_file():
+            self._logger.info(f"Copying {path_from}")
+            shutil.copy2(str(path_from), str(path_to))
+
+        elif path_from.is_dir():
+            if not r_option:
+                raise IsADirectoryError(f"-r not specified; omitting directory {path_from}")
+
+            if not path_to.is_dir():
+                raise NotADirectoryError(f"cannot overwrite non-directory {path_to} with directory {path_from}")
+
+            self._logger.info(f"Copying {path_from}")
+            shutil.copytree(path_from, path_to, dirs_exist_ok=True)
