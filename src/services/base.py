@@ -32,6 +32,7 @@ class OSConsoleServiceBase(ABC):
             path_to: PathLike[str] | str,
     ) -> None: ...
 
+    @abstractmethod
     def rm(
             self,
             path: PathLike[str] | str,
