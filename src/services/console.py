@@ -129,7 +129,9 @@ class OSConsoleService(OSConsoleServiceBase):
 
         try:
             shutil.move(path_from, path_to)
+            self._logger.info(f"Moving {path_from} to {path_to}")
         except PermissionError:
+            self._logger.error(f"No execute permission for target.")
             raise PermissionError(f"no execute permission for target.")
 
 
@@ -140,12 +142,18 @@ class OSConsoleService(OSConsoleServiceBase):
     ) -> None:
         path = Path(path).expanduser().resolve()
 
+        if not path.exists(follow_symlinks=True):
+            self._logger.error(f"File not found: {path}")
+            raise FileNotFoundError(f'Cannot access {path}: No such file or directory')
+
         home_dir = Path.home()
         if path in (home_dir, home_dir.root, home_dir.parent):
+            self._logger.error(f"No execute permission for target {path}")
             raise PermissionError(f'no execute permission for target {path}')
 
         if path.is_dir():
             if not r_option:
+                self._logger.error(f"Removing dict as a file: {path}")
                 raise IsADirectoryError(f"-r not specified; omitting directory {path}")
 
             if typer_confirm():
@@ -153,3 +161,5 @@ class OSConsoleService(OSConsoleServiceBase):
 
         else:
             shutil.move(path, TRASH_DIR)
+
+        self._logger.info(f"Removing {path}")
