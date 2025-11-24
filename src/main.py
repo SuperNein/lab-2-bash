@@ -144,10 +144,10 @@ def cat(
 def cp(
     ctx: Context,
     path_from: Path = typer.Argument(
-        ..., exists=False, readable=False, help="File "
+        ..., exists=False, readable=False, help="Path to copy"
     ),
     path_to: Path = typer.Argument(
-        ..., exists=False, readable=False, help="Directory to make current"
+        ..., exists=False, readable=False, help="Path where copying"
     ),
     r_option: bool = typer.Option(
         False, "-r", help="Copy directories recursively"
@@ -157,7 +157,7 @@ def cp(
     Copy file.
     :param ctx: typer context object for imitating di container
     :param path_from: path to copy
-    :param path_to: path where
+    :param path_to: path where copying
     :param r_option:  recursive mode
     :return:
     """

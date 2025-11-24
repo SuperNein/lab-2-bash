@@ -97,9 +97,11 @@ class OSConsoleService(OSConsoleServiceBase):
 
         elif path_from.is_dir():
             if not r_option:
+                self._logger.error(f"Copying dict as a file: {path_from}")
                 raise IsADirectoryError(f"-r not specified; omitting directory {path_from}")
 
             if not path_to.is_dir():
+                self._logger.error(f"Copying dict to file: {path_from}")
                 raise NotADirectoryError(f"cannot overwrite non-directory {path_to} with directory {path_from}")
 
             self._logger.info(f"Copying {path_from}")
