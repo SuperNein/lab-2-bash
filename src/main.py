@@ -73,47 +73,67 @@ def run(ctx: Context) -> None:
 def ls(
     ctx: Context,
     path: Path = typer.Argument(
-        os.getcwd(), exists=False, readable=False, help="Path for listing"
+        "./", exists=False, readable=False, help="Path for listing"
     ),
 ) -> None:
     """
     List all files in a directory.
     :param ctx:   typer context object for imitating di container
     :param path:  path to directory to list
-    :return: content of directory
+    :return:
     """
     try:
         container: Container = get_container()
         content = container.console_service.ls(path)
         sys.stdout.writelines(content)
     except OSError as e:
-        typer.echo(e)
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
+@app.command()
+def cd(
+    ctx: Context,
+    path: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Directory to make current"
+    ),
+) -> None:
+    """
+    Make a directory current.
+    :param ctx: typer context object for imitating di container
+    :param path: Directory to make current
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.cd(path)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
 
 
 @app.command()
 def cat(
     ctx: Context,
-    filename: Path = typer.Argument(
+    path: Path = typer.Argument(
         ..., exists=False, readable=False, help="File to print"
     ),
 ) -> None:
     """
     Cat a file.
     :param ctx: typer context object for imitating di container
-    :param filename: Filename to cat
+    :param path: Filename to cat
     :return:
     """
     try:
         container: Container = get_container()
         data = container.console_service.cat(
-            filename,
+            path,
         )
         if isinstance(data, bytes):
             sys.stdout.buffer.write(data)
         else:
             sys.stdout.write(data)
     except OSError as e:
-        typer.echo(e)
+        typer.echo(f"{ctx.command.name}: {e}")
 
 
 if __name__ == "__main__":
