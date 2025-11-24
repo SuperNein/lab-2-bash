@@ -1,8 +1,8 @@
 [project]
-name = "labs"
+name = "bash_lab"
 version = "0.1.0"
-description = "Add your description here"
-requires-python = ">=3.12"
+description = "Bash lab"
+requires-python = ">=3.14"
 dependencies = [
     "pytest>=8.4.2",
 ]
