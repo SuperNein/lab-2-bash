@@ -150,7 +150,7 @@ def cp(
         ..., exists=False, readable=False, help="Directory to make current"
     ),
     r_option: bool = typer.Option(
-        False, "-l", help="Copy directories recursively"
+        False, "-r", help="Copy directories recursively"
     ),
 ) -> None:
     """
