@@ -8,6 +8,8 @@ from typing import Literal
 
 from src.services.base import OSConsoleServiceBase
 from src.services.path_funcs import path_stat
+from src.services.typer_echo import typer_confirm
+from src.common.constants import TRASH_DIR
 
 
 class OSConsoleService(OSConsoleServiceBase):
@@ -123,9 +125,31 @@ class OSConsoleService(OSConsoleServiceBase):
 
         if path_from.is_dir() and path_to.exists() and path_to.is_file():
             self._logger.error(f"Copying dict to file: {path_from}")
-            raise NotADirectoryError(f"'cannot overwrite non-directory {path_to} with directory'{path_from}")
+            raise NotADirectoryError(f"cannot overwrite non-directory {path_to} with directory {path_from}")
 
         try:
             shutil.move(path_from, path_to)
         except PermissionError:
-            raise PermissionError(f"No execute permission for target.")
+            raise PermissionError(f"no execute permission for target.")
+
+
+    def rm(
+            self,
+            path: PathLike[str] | str,
+            r_option: bool,
+    ) -> None:
+        path = Path(path).expanduser().resolve()
+
+        home_dir = Path.home()
+        if path in (home_dir, home_dir.root, home_dir.parent):
+            raise PermissionError(f'no execute permission for target {path}')
+
+        if path.is_dir():
+            if not r_option:
+                raise IsADirectoryError(f"-r not specified; omitting directory {path}")
+
+            if typer_confirm():
+                shutil.move(path, TRASH_DIR)
+
+        else:
+            shutil.move(path, TRASH_DIR)

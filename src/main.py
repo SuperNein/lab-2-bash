@@ -192,5 +192,29 @@ def mv(
         typer.echo(f"{ctx.command.name}: {e}")
 
 
+@app.command()
+def rm(
+    ctx: Context,
+    path: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Path for removing"
+    ),
+    r_option: bool = typer.Option(
+        False, "-r", help="Copy directories recursively"
+    ),
+) -> None:
+    """
+    Remove file or directory.
+    :param ctx: typer context object for imitating di container
+    :param path: path for removing
+    :param r_option:  recursive mode
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.rm(path, r_option)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
 if __name__ == "__main__":
     app()

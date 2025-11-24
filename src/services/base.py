@@ -31,3 +31,9 @@ class OSConsoleServiceBase(ABC):
             path_from: PathLike[str] | str,
             path_to: PathLike[str] | str,
     ) -> None: ...
+
+    def rm(
+            self,
+            path: PathLike[str] | str,
+            r_option: bool,
+    ) -> None: ...
