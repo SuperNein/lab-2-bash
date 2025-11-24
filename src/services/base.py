@@ -5,7 +5,11 @@ from typing import Literal
 
 class OSConsoleServiceBase(ABC):
     @abstractmethod
-    def ls(self, path: PathLike[str] | str) -> list[str]: ...
+    def ls(
+            self,
+            path: PathLike[str] | str,
+            l_option: bool,
+    ) -> list[str]: ...
 
     @abstractmethod
     def cd(self, path: PathLike[str] | str) -> None: ...

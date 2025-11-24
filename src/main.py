@@ -73,18 +73,20 @@ def run(ctx: Context) -> None:
 def ls(
     ctx: Context,
     path: Path = typer.Argument(
-        "./", exists=False, readable=False, help="Path for listing"
+        "./", exists=False, readable=False, help="Path for listing",
     ),
+    l_option: bool = typer.Option(False, "-l", help="Use long listing format"),
 ) -> None:
     """
     List all files in a directory.
     :param ctx:   typer context object for imitating di container
     :param path:  path to directory to list
+    :param l_option:  use long listing format
     :return:
     """
     try:
         container: Container = get_container()
-        content = container.console_service.ls(path)
+        content = container.console_service.ls(path, l_option)
         sys.stdout.writelines(content)
     except OSError as e:
         typer.echo(f"{ctx.command.name}: {e}")

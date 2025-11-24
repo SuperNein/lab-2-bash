@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Literal
 
 from src.services.base import OSConsoleServiceBase
+from src.services.path_funcs import path_stat
 
 
 class OSConsoleService(OSConsoleServiceBase):
@@ -13,7 +14,7 @@ class OSConsoleService(OSConsoleServiceBase):
         self._logger = logger
 
 
-    def ls(self, path: PathLike[str] | str) -> list[str]:
+    def ls(self, path: PathLike[str] | str, l_option: bool) -> list[str]:
         path = Path(path).expanduser().resolve()
 
         if not path.exists():
@@ -26,7 +27,17 @@ class OSConsoleService(OSConsoleServiceBase):
 
         self._logger.info(f"Listing {path}")
 
-        return [entry.name + "\n" for entry in path.iterdir()]
+        dirlist = []
+        for entry in path.iterdir():
+            if l_option:
+                stat = path_stat(entry)
+                entry_info = f'{stat['mode']} {stat['mtime']} {stat['size']:>15} {stat['name']}'
+            else:
+                entry_info = entry.name
+
+            dirlist.append(entry_info + '\n')
+
+        return dirlist
 
 
     def cd(self, path: PathLike[str] | str) -> None:
