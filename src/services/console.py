@@ -106,3 +106,26 @@ class OSConsoleService(OSConsoleServiceBase):
 
             self._logger.info(f"Copying {path_from}")
             shutil.copytree(path_from, path_to, dirs_exist_ok=True)
+
+
+    def mv(
+        self,
+        path_from: PathLike[str] | str,
+        path_to: PathLike[str] | str,
+    ) -> None:
+
+        path_from = Path(path_from).expanduser().resolve()
+        path_to = Path(path_to).expanduser().resolve()
+
+        if not path_from.exists(follow_symlinks=True):
+            self._logger.error(f"File not found: {path_from}")
+            raise FileNotFoundError(f'Cannot access {path_from}: No such file or directory')
+
+        if path_from.is_dir() and path_to.exists() and path_to.is_file():
+            self._logger.error(f"Copying dict to file: {path_from}")
+            raise NotADirectoryError(f"'cannot overwrite non-directory {path_to} with directory'{path_from}")
+
+        try:
+            shutil.move(path_from, path_to)
+        except PermissionError:
+            raise PermissionError(f"No execute permission for target.")

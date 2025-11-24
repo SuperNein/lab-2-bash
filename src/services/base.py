@@ -23,4 +23,11 @@ class OSConsoleServiceBase(ABC):
             path_from: PathLike[str] | str,
             path_to: PathLike[str] | str,
             r_option: bool,
-    ) -> list[str]: ...
+    ) -> None: ...
+
+    @abstractmethod
+    def mv(
+            self,
+            path_from: PathLike[str] | str,
+            path_to: PathLike[str] | str,
+    ) -> None: ...

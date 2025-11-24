@@ -168,6 +168,29 @@ def cp(
         typer.echo(f"{ctx.command.name}: {e}")
 
 
+@app.command()
+def mv(
+    ctx: Context,
+    path_from: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Path for moving"
+    ),
+    path_to: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Path where moving"
+    ),
+) -> None:
+    """
+    Move file or directory.
+    :param ctx: typer context object for imitating di container
+    :param path_from: path for moving
+    :param path_to: path where moving
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.cp(path_from, path_to)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
 
 if __name__ == "__main__":
     app()
