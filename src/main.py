@@ -132,10 +132,7 @@ def cat(
         data = container.console_service.cat(
             path,
         )
-        if isinstance(data, bytes):
-            sys.stdout.buffer.write(data)
-        else:
-            sys.stdout.write(data)
+        sys.stdout.write(data)
     except OSError as e:
         typer.echo(f"{ctx.command.name}: {e}")
 
@@ -187,7 +184,7 @@ def mv(
     """
     try:
         container: Container = get_container()
-        container.console_service.cp(path_from, path_to)
+        container.console_service.mv(path_from, path_to)
     except OSError as e:
         typer.echo(f"{ctx.command.name}: {e}")
 
