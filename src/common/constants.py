@@ -1,4 +1,7 @@
+import os
 from pathlib import Path
 
 TRASH_DIR = Path(__file__).parent.parent.parent / ".trash"
-HISTORY_DIR = Path(__file__).parent.parent.parent / ".history"
+TRASH_DIR.mkdir(exist_ok=True)
+
+HISTORY_PATH = Path(__file__).parent.parent.parent / ".history"

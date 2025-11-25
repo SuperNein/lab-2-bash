@@ -11,6 +11,7 @@ from typer import Typer, Context
 
 from src.dependencies.container import Container
 from src.services.console import OSConsoleService
+from src.services.typer_std import write_history
 
 _logger = None
 _container = None
@@ -52,21 +53,35 @@ def main(ctx: Context) -> None:
     ctx.obj = _container
 
 
-@app.command(hidden=True)
+@app.command()
 def run(ctx: Context) -> None:
     """
-    Run interactive CLI.
+    Run interactive session. Use 'exit' command to leave.
     :param ctx:   typer context object for imitating di container
     :return:   None
     """
-    typer.echo("Welcome to the interactive Typer session!")
+    typer.echo(">>> Start the interactive session")
 
     while (user_input:=typer.prompt(f"{os.getcwd()}", prompt_suffix="> ")) != "exit":
+        write_history(user_input)
         command = shlex_split(user_input)
+
         try:
             app(command)
         except SystemExit:
             pass
+
+
+@app.command("exit")
+def exit_cmd(
+        ctr: Context,
+) -> None:
+    """
+    Exit interactive session.
+    :param ctr: typer context object for imitating di container
+    :return:
+    """
+    pass
 
 
 @app.command()
@@ -132,10 +147,7 @@ def cat(
         data = container.console_service.cat(
             path,
         )
-        if isinstance(data, bytes):
-            sys.stdout.buffer.write(data)
-        else:
-            sys.stdout.write(data)
+        sys.stdout.write(data)
     except OSError as e:
         typer.echo(f"{ctx.command.name}: {e}")
 
@@ -187,7 +199,7 @@ def mv(
     """
     try:
         container: Container = get_container()
-        container.console_service.cp(path_from, path_to)
+        container.console_service.mv(path_from, path_to)
     except OSError as e:
         typer.echo(f"{ctx.command.name}: {e}")
 
@@ -212,6 +224,115 @@ def rm(
     try:
         container: Container = get_container()
         container.console_service.rm(path, r_option)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
+@app.command("zip")
+def zip_cmd(
+    ctx: Context,
+    folder: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Folder for archiving to .zip"
+    ),
+    archive: str = typer.Argument(
+        ..., help="Archive.zip name"
+    ),
+) -> None:
+    """
+    Archive folder to .zip.
+    :param ctx:   typer context object for imitating di container
+    :param folder:   path of folder to archive
+    :param archive:   archive name with '.zip' type
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.zip(folder, archive)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
+@app.command()
+def unzip(
+    ctx: Context,
+    archive: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Archive.zip to unzip"
+    ),
+) -> None:
+    """
+    Unzip zipfile
+    :param ctx:   typer context object for imitating di container
+    :param archive:   archive.zip to unzip
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.unzip(archive)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
+@app.command()
+def tar(
+    ctx: Context,
+    folder: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Folder for archiving to .tar.gz"
+    ),
+    archive: str = typer.Argument(
+        ..., help="Archive.tar.gz name"
+    ),
+) -> None:
+    """
+    Archive folder to .tar.gz.
+    :param ctx:   typer context object for imitating di container
+    :param folder:   path of folder to archive
+    :param archive:   archive name with '.tar.gz' type
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.tar(folder, archive)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
+@app.command()
+def untar(
+    ctx: Context,
+    archive: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Archive.tar.gz to untar"
+    ),
+) -> None:
+    """
+    Untar tarfile
+    :param ctx:   typer context object for imitating di container
+    :param archive:   archive.tar.gz to untar
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.untar(archive)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
+@app.command()
+def history(
+    ctx: Context,
+    num: int | None = typer.Argument(
+        None, help="Number of last commandlines from history"
+    ),
+) -> None:
+    """
+    Return last commandlines from history
+    :param ctx:   typer context object for imitating di container
+    :param num:   number of last commandlines from history. All history if None
+    :return:   last commandlines from history
+    """
+    try:
+        container: Container = get_container()
+        data = container.console_service.history(num)
+        sys.stdout.write(data)
     except OSError as e:
         typer.echo(f"{ctx.command.name}: {e}")
 

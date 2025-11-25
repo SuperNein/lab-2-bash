@@ -4,12 +4,13 @@ import shutil
 from logging import Logger
 from os import PathLike
 from pathlib import Path
-from typing import Literal
+from zipfile import ZipFile
+from tarfile import TarFile
 
 from src.services.base import OSConsoleServiceBase
 from src.services.path_funcs import path_stat
-from src.services.typer_echo import typer_confirm
-from src.common.constants import TRASH_DIR
+from src.services.typer_std import typer_confirm
+from src.common.constants import TRASH_DIR, HISTORY_PATH
 
 
 class OSConsoleService(OSConsoleServiceBase):
@@ -163,3 +164,110 @@ class OSConsoleService(OSConsoleServiceBase):
             shutil.move(path, TRASH_DIR)
 
         self._logger.info(f"Removing {path}")
+
+
+    def zip(
+        self,
+        folder: PathLike[str] | str,
+        archive: str,
+    ) -> None:
+
+        folder = Path(folder).expanduser().resolve()
+
+        if not folder.exists():
+            self._logger.error(f"File not found: {folder}")
+            raise FileNotFoundError(f'Cannot access {folder}: No such file or directory')
+
+        if not archive.endswith(".zip"):
+            self._logger.error(f"Archive {archive} must be named with .zip")
+            raise OSError(f"Cannot make {archive}: Must be named with .zip")
+
+        self._logger.info(f"Archiving {folder} to zip")
+
+        with ZipFile(archive, "w") as zipfile:
+            for item in folder.rglob("*"):
+                zipfile.write(item, arcname=item.relative_to(folder))
+
+
+    def unzip(
+        self,
+        archive: PathLike[str] | str,
+    ) -> None:
+
+        archive = Path(archive).expanduser().resolve()
+
+        if not archive.exists():
+            self._logger.error(f"File not found: {archive}")
+            raise FileNotFoundError(f'Cannot access {archive}: No such file or directory')
+
+        if not archive.name.endswith(".zip"):
+            self._logger.error(f"Archive {archive} must be named with .zip")
+            raise OSError(f"Cannot unzip {archive}: No zip file")
+
+        self._logger.info(f"Unzipping {archive}")
+
+        with ZipFile(archive, "r") as zipfile:
+            zipfile.extractall(archive.parent)
+
+
+    def tar(
+        self,
+        folder: PathLike[str] | str,
+        archive: str,
+    ) -> None:
+
+        folder = Path(folder).expanduser().resolve()
+
+        if not folder.exists():
+            self._logger.error(f"File not found: {folder}")
+            raise FileNotFoundError(f'Cannot access {folder}: No such file or directory')
+
+        if not archive.endswith(".tar.gz"):
+            self._logger.error(f"Archive {archive} must be named with .tar.gz")
+            raise OSError(f"Cannot make {archive}: Must be named with .tar.gz")
+
+        self._logger.info(f"Archiving {folder} to .tar.gz")
+
+        with TarFile(archive, "w") as tar:
+            for item in folder.rglob("*"):
+                tar.add(item, arcname=item.relative_to(folder))
+
+
+    def untar(
+        self,
+        archive: PathLike[str] | str,
+    ) -> None:
+
+        archive = Path(archive).expanduser().resolve()
+
+        if not archive.exists():
+            self._logger.error(f"File not found: {archive}")
+            raise FileNotFoundError(f'Cannot access {archive}: No such file or directory')
+
+        if not archive.name.endswith(".tar.gz"):
+            self._logger.error(f"Archive {archive} must be named with .tar.gz")
+            raise OSError(f"Cannot untar {archive}: No .tar.gz file")
+
+        self._logger.info(f"Untar {archive}")
+
+        with TarFile(archive, "r") as tar:
+            tar.extractall(archive.parent)
+
+
+    def history(self,
+            num: int | None,
+    ) -> str:
+        res = ""
+
+        with open(HISTORY_PATH, "r", encoding='utf-8') as file:
+            commands = file.readlines()
+
+            if num is None:
+                num = len(commands)
+
+            for n, line in enumerate(commands[-num:], start=1):
+                res += f"{n} {line}"
+
+        self._logger.info(f"Return last {num} commandlines from history")
+
+        return res
