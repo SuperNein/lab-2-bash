@@ -9,7 +9,7 @@ from tarfile import TarFile
 
 from src.services.base import OSConsoleServiceBase
 from src.services.path_funcs import path_stat
-from src.services.typer_echo import typer_confirm
+from src.services.typer_std import typer_confirm
 from src.common.constants import TRASH_DIR
 
 

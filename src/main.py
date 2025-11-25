@@ -11,6 +11,7 @@ from typer import Typer, Context
 
 from src.dependencies.container import Container
 from src.services.console import OSConsoleService
+from src.services.typer_std import write_history
 
 _logger = None
 _container = None
@@ -62,7 +63,9 @@ def run(ctx: Context) -> None:
     typer.echo(">>> Start the interactive session")
 
     while (user_input:=typer.prompt(f"{os.getcwd()}", prompt_suffix="> ")) != "exit":
+        write_history(user_input)
         command = shlex_split(user_input)
+
         try:
             app(command)
         except SystemExit:
