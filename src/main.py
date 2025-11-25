@@ -59,7 +59,7 @@ def run(ctx: Context) -> None:
     :param ctx:   typer context object for imitating di container
     :return:   None
     """
-    typer.echo("Welcome to the interactive Typer session!")
+    typer.echo(">>> Start the interactive session")
 
     while (user_input:=typer.prompt(f"{os.getcwd()}", prompt_suffix="> ")) != "exit":
         command = shlex_split(user_input)
@@ -67,6 +67,18 @@ def run(ctx: Context) -> None:
             app(command)
         except SystemExit:
             pass
+
+
+@app.command("exit")
+def exit_cmd(
+        ctr: Context,
+) -> None:
+    """
+    Exit interactive session.
+    :param ctr: typer context object for imitating di container
+    :return:
+    """
+    pass
 
 
 @app.command()
