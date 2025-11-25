@@ -293,5 +293,25 @@ def tar(
         typer.echo(f"{ctx.command.name}: {e}")
 
 
+@app.command()
+def untar(
+    ctx: Context,
+    archive: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Archive.tar.gz to untar"
+    ),
+) -> None:
+    """
+    Untar tarfile
+    :param ctx:   typer context object for imitating di container
+    :param archive:   archive.tar.gz to untar
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.untar(archive)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
 if __name__ == "__main__":
     app()

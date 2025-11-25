@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from os import PathLike
-from typing import Literal
 
 
 class OSConsoleServiceBase(ABC):
@@ -54,4 +53,9 @@ class OSConsoleServiceBase(ABC):
     def tar(self,
             folder: PathLike[str] | str,
             archive: str,
+    ) -> None: ...
+
+    @abstractmethod
+    def untar(self,
+            archive: PathLike[str] | str,
     ) -> None: ...

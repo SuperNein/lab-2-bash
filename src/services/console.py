@@ -231,3 +231,24 @@ class OSConsoleService(OSConsoleServiceBase):
         with TarFile(archive, "w") as tar:
             for item in folder.rglob("*"):
                 tar.add(item, arcname=item.relative_to(folder))
+
+
+    def untar(
+        self,
+        archive: PathLike[str] | str,
+    ) -> None:
+
+        archive = Path(archive).expanduser().resolve()
+
+        if not archive.exists():
+            self._logger.error(f"File not found: {archive}")
+            raise FileNotFoundError(f'Cannot access {archive}: No such file or directory')
+
+        if not archive.name.endswith(".tar.gz"):
+            self._logger.error(f"Archive {archive} must be named with .tar.gz")
+            raise OSError(f"Cannot untar {archive}: No .tar.gz file")
+
+        self._logger.info(f"Untar {archive}")
+
+        with TarFile(archive, "r") as tar:
+            tar.extractall(archive.parent)
