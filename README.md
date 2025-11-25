@@ -68,6 +68,9 @@ lab-2-bash
 ### Документация
 
 ```
+# Установка зависимостей
+pip install -r requirements.txt
+
 # Документация по командам
 python -m src.main --help
 
