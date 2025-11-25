@@ -316,5 +316,26 @@ def untar(
         typer.echo(f"{ctx.command.name}: {e}")
 
 
+@app.command()
+def history(
+    ctx: Context,
+    num: int | None = typer.Argument(
+        None, help="Number of last commandlines from history"
+    ),
+) -> None:
+    """
+    Return last commandlines from history
+    :param ctx:   typer context object for imitating di container
+    :param num:   number of last commandlines from history. All history if None
+    :return:   last commandlines from history
+    """
+    try:
+        container: Container = get_container()
+        data = container.console_service.history(num)
+        sys.stdout.write(data)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
 if __name__ == "__main__":
     app()

@@ -10,7 +10,7 @@ from tarfile import TarFile
 from src.services.base import OSConsoleServiceBase
 from src.services.path_funcs import path_stat
 from src.services.typer_std import typer_confirm
-from src.common.constants import TRASH_DIR
+from src.common.constants import TRASH_DIR, HISTORY_PATH
 
 
 class OSConsoleService(OSConsoleServiceBase):
@@ -252,3 +252,22 @@ class OSConsoleService(OSConsoleServiceBase):
 
         with TarFile(archive, "r") as tar:
             tar.extractall(archive.parent)
+
+
+    def history(self,
+            num: int | None,
+    ) -> str:
+        res = ""
+
+        with open(HISTORY_PATH, "r", encoding='utf-8') as file:
+            commands = file.readlines()
+
+            if num is None:
+                num = len(commands)
+
+            for n, line in enumerate(commands[-num:], start=1):
+                res += f"{n} {line}"
+
+        self._logger.info(f"Return last {num} commandlines from history")
+
+        return res

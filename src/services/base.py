@@ -59,3 +59,8 @@ class OSConsoleServiceBase(ABC):
     def untar(self,
             archive: PathLike[str] | str,
     ) -> None: ...
+
+    @abstractmethod
+    def history(self,
+            num: int | None,
+    ) -> str: ...
