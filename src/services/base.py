@@ -44,3 +44,8 @@ class OSConsoleServiceBase(ABC):
             folder: PathLike[str] | str,
             archive: str,
     ) -> None: ...
+
+    @abstractmethod
+    def unzip(self,
+            archive: PathLike[str] | str,
+    ) -> None: ...

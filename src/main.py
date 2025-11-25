@@ -237,5 +237,25 @@ def zip_cmd(
         typer.echo(f"{ctx.command.name}: {e}")
 
 
+@app.command()
+def unzip(
+    ctx: Context,
+    archive: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Archive.zip to unzip"
+    ),
+) -> None:
+    """
+    Unzip zipfile
+    :param ctx:   typer context object for imitating di container
+    :param archive:   archive.zip to unzip
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.unzip(archive)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
 if __name__ == "__main__":
     app()
