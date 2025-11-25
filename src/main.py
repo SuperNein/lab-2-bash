@@ -53,10 +53,10 @@ def main(ctx: Context) -> None:
     ctx.obj = _container
 
 
-@app.command(hidden=True)
+@app.command()
 def run(ctx: Context) -> None:
     """
-    Run interactive CLI.
+    Run interactive session. Use 'exit' command to leave.
     :param ctx:   typer context object for imitating di container
     :return:   None
     """
