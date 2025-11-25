@@ -216,5 +216,29 @@ def rm(
         typer.echo(f"{ctx.command.name}: {e}")
 
 
+@app.command("zip")
+def zip_cmd(
+    ctx: Context,
+    folder: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Folder for archiving to .zip"
+    ),
+    archive: str = typer.Argument(
+        ..., help="Archive.zip name"
+    ),
+) -> None:
+    """
+    Archive folder to .zip.
+    :param ctx:   typer context object for imitating di container
+    :param folder:   path of folder to archive
+    :param archive:   archive name with '.zip' type
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.zip(folder, archive)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
 if __name__ == "__main__":
     app()

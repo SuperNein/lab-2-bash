@@ -4,7 +4,7 @@ import shutil
 from logging import Logger
 from os import PathLike
 from pathlib import Path
-from typing import Literal
+from zipfile import ZipFile
 
 from src.services.base import OSConsoleServiceBase
 from src.services.path_funcs import path_stat
@@ -163,3 +163,26 @@ class OSConsoleService(OSConsoleServiceBase):
             shutil.move(path, TRASH_DIR)
 
         self._logger.info(f"Removing {path}")
+
+
+    def zip(
+        self,
+        folder: PathLike[str] | str,
+        archive: str,
+    ) -> None:
+
+        folder = Path(folder).expanduser().resolve()
+
+        if not folder.exists():
+            self._logger.error(f"File not found: {folder}")
+            raise FileNotFoundError(f'Cannot access {folder}: No such file or directory')
+
+        if not archive.endswith(".zip"):
+            self._logger.error(f"Archive {archive} must be named with .zip")
+            raise OSError(f"Archive must be named with .zip")
+
+        self._logger.info(f"Archiving {folder} to zip")
+
+        with ZipFile(archive, "w") as zipfile:
+            for item in folder.rglob("*"):
+                zipfile.write(item, arcname=item.relative_to(folder))

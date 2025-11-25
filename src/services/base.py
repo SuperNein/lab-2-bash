@@ -38,3 +38,9 @@ class OSConsoleServiceBase(ABC):
             path: PathLike[str] | str,
             r_option: bool,
     ) -> None: ...
+
+    @abstractmethod
+    def zip(self,
+            folder: PathLike[str] | str,
+            archive: str,
+    ) -> None: ...
