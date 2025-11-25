@@ -257,5 +257,29 @@ def unzip(
         typer.echo(f"{ctx.command.name}: {e}")
 
 
+@app.command()
+def tar(
+    ctx: Context,
+    folder: Path = typer.Argument(
+        ..., exists=False, readable=False, help="Folder for archiving to .tar.gz"
+    ),
+    archive: str = typer.Argument(
+        ..., help="Archive.tar.gz name"
+    ),
+) -> None:
+    """
+    Archive folder to .tar.gz.
+    :param ctx:   typer context object for imitating di container
+    :param folder:   path of folder to archive
+    :param archive:   archive name with '.tar.gz' type
+    :return:
+    """
+    try:
+        container: Container = get_container()
+        container.console_service.tar(folder, archive)
+    except OSError as e:
+        typer.echo(f"{ctx.command.name}: {e}")
+
+
 if __name__ == "__main__":
     app()

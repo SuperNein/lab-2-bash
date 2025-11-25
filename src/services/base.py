@@ -49,3 +49,9 @@ class OSConsoleServiceBase(ABC):
     def unzip(self,
             archive: PathLike[str] | str,
     ) -> None: ...
+
+    @abstractmethod
+    def tar(self,
+            folder: PathLike[str] | str,
+            archive: str,
+    ) -> None: ...

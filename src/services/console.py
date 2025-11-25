@@ -5,6 +5,7 @@ from logging import Logger
 from os import PathLike
 from pathlib import Path
 from zipfile import ZipFile
+from tarfile import TarFile
 
 from src.services.base import OSConsoleServiceBase
 from src.services.path_funcs import path_stat
@@ -207,3 +208,26 @@ class OSConsoleService(OSConsoleServiceBase):
 
         with ZipFile(archive, "r") as zipfile:
             zipfile.extractall(archive.parent)
+
+
+    def tar(
+        self,
+        folder: PathLike[str] | str,
+        archive: str,
+    ) -> None:
+
+        folder = Path(folder).expanduser().resolve()
+
+        if not folder.exists():
+            self._logger.error(f"File not found: {folder}")
+            raise FileNotFoundError(f'Cannot access {folder}: No such file or directory')
+
+        if not archive.endswith(".tar.gz"):
+            self._logger.error(f"Archive {archive} must be named with .tar.gz")
+            raise OSError(f"Cannot make {archive}: Must be named with .tar.gz")
+
+        self._logger.info(f"Archiving {folder} to .tar.gz")
+
+        with TarFile(archive, "w") as tar:
+            for item in folder.rglob("*"):
+                tar.add(item, arcname=item.relative_to(folder))
