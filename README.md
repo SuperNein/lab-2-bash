@@ -3,10 +3,6 @@
 
 ---
 
-*test в разработке*
-
----
-
 ### Цели работы
 - Освоить работу с файловой системой средствами Python.
 - Реализовать основные команды управления файлами и каталогами.
@@ -47,7 +43,18 @@ lab-2-bash
 │           __init__.py
 │           
 └───tests
-    └───__init__.py
+        conftest.py
+        tests_cat.py
+        tests_cd.py
+        tests_cp.py
+        tests_ls.py
+        tests_mv.py
+        tests_rm.py
+        tests_tar.py
+        tests_untar.py
+        tests_unzip.py
+        tests_zip.py
+        __init__.py
 ```
 
 ### Библиотеки
@@ -67,12 +74,14 @@ lab-2-bash
 
 ### Документация
 
+#### Установка и запуск
+
 ```
 # Установка зависимостей
 pip install -r requirements.txt
 
 # Документация по командам
-python -m src.main --help
+python -m src.main [COMMAND] --help
 
 # Вызов команды
 python -m src.main COMMAND [OPTIONS] [ARGS]... 
@@ -81,6 +90,31 @@ python -m src.main COMMAND [OPTIONS] [ARGS]...
 python -m src.main run
 ```
 
+#### Команды
+
+```
+# Интерактивный режим
+run    # Запуск интерактивного режима
+exit    # Прерывание интерактивного режима
+
+# Работа с файлами
+ls [OPTIONS] [PATH]    # Содержимое директории. [-l] - Подробная информация о содержимом
+cd PATH    # Переход в директорию
+cat PATH    # Вывод содержимого файла
+cp [OPTIONS] PATH_FROM PATH_TO    # Копирование. [-r] - Рекурсивное копирование
+mv PATH_FROM PATH_TO    # Переместить
+rm [OPTIONS] PATH    # Удаление (перемещает удаленное в .trash корня проекта). [-r] - Рекурсивное удаление
+
+# Архивы и история
+zip FOLDER ARCHIVE    # Архивация zip
+unzip ARCHIVE    # Разархивация zip
+tar FOLDER ARCHIVE    # Архивация tar.gz
+untar ARCHIVE    # Разархивация tar.gz
+history [NUM]    # Вывод последних NUM введенных команд. Выводит всю историю без аргумента
+```
+
+- Для подробного описания конкретной команды в интерактивном режиме можно использовать `COMMAND --help`
+
 --- 
 
 ### Выводы
@@ -88,3 +122,4 @@ python -m src.main run
 В ходе работы я научился:
 - Работать с os, pathlib, shutil, shlex
 - Разрабатывать консольный интерфейс с typer
+- Писать тесты с фикстурами
