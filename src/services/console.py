@@ -229,7 +229,7 @@ class OSConsoleService(OSConsoleServiceBase):
         self._logger.info(f"Unzipping {archive}")
 
         with ZipFile(archive, "r") as zipfile:
-            zipfile.extractall(archive.parent)
+            zipfile.extractall(os.path.splitext(archive)[0])
 
 
     def tar(
@@ -273,7 +273,7 @@ class OSConsoleService(OSConsoleServiceBase):
         self._logger.info(f"Untar {archive}")
 
         with TarFile(archive, "r") as tar:
-            tar.extractall(archive.parent)
+            tar.extractall(archive)
 
 
     def history(self,
