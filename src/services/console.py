@@ -10,7 +10,7 @@ from tarfile import TarFile
 from src.services.base import OSConsoleServiceBase
 from src.services.path_funcs import path_stat
 from src.services.typer_std import typer_confirm
-from src.common.constants import TRASH_DIR, HISTORY_PATH
+from src.common.constants import HISTORY_PATH
 
 
 class OSConsoleService(OSConsoleServiceBase):
@@ -135,7 +135,6 @@ class OSConsoleService(OSConsoleServiceBase):
             self._logger.error(f"No execute permission for target.")
             raise PermissionError(f"no execute permission for target.")
 
-
     def rm(
             self,
             path: PathLike[str] | str,
@@ -148,9 +147,33 @@ class OSConsoleService(OSConsoleServiceBase):
             raise FileNotFoundError(f'Cannot access {path}: No such file or directory')
 
         home_dir = Path.home()
-        if path in (home_dir, home_dir.root, home_dir.parent):
-            self._logger.error(f"No execute permission for target {path}")
+        current_dir = Path.cwd()
+
+        forbidden_dirs = [
+            home_dir,
+            home_dir.root,
+            home_dir.parent,
+            *home_dir.parents
+        ]
+
+        if path in forbidden_dirs:
+            self._logger.error(f"No execute permission to remove forbidden {path}")
             raise PermissionError(f'no execute permission for target {path}')
+
+        if path.is_dir():
+            try:
+                current_dir.relative_to(path)
+                self._logger.error(f"Cannot remove parent directory: {path}")
+                raise PermissionError(f'no execute permission for target {path}')
+            except ValueError:
+                pass
+
+            try:
+                home_dir.relative_to(path)
+                self._logger.error(f"Cannot remove directory containing home: {path}")
+                raise PermissionError(f'no execute permission for target {path}')
+            except ValueError:
+                pass
 
         if path.is_dir():
             if not r_option:
@@ -158,10 +181,9 @@ class OSConsoleService(OSConsoleServiceBase):
                 raise IsADirectoryError(f"-r not specified; omitting directory {path}")
 
             if typer_confirm():
-                shutil.move(path, TRASH_DIR)
-
+                shutil.rmtree(path)
         else:
-            shutil.move(path, TRASH_DIR)
+            path.unlink()
 
         self._logger.info(f"Removing {path}")
 
@@ -207,7 +229,7 @@ class OSConsoleService(OSConsoleServiceBase):
         self._logger.info(f"Unzipping {archive}")
 
         with ZipFile(archive, "r") as zipfile:
-            zipfile.extractall(archive.parent)
+            zipfile.extractall(os.path.splitext(archive)[0])
 
 
     def tar(
@@ -251,7 +273,7 @@ class OSConsoleService(OSConsoleServiceBase):
         self._logger.info(f"Untar {archive}")
 
         with TarFile(archive, "r") as tar:
-            tar.extractall(archive.parent)
+            tar.extractall(archive)
 
 
     def history(self,
